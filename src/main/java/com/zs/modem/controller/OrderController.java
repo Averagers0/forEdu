@@ -18,4 +18,9 @@ public class OrderController {
         return orderService.order123(a);
     }
 
+    @GetMapping("/order2")
+    public String order2(int a){
+        return orderService.order123(a);
+    }
+
 }
