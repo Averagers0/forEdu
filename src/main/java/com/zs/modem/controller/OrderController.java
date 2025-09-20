@@ -46,4 +46,7 @@ public class OrderController {
    public void w(){
         System.out.println("abc");
    }
+    public void r(){
+        System.out.println("abc");
+    }
 }
