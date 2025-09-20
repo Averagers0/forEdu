@@ -34,6 +34,11 @@ public class OrderController {
         return orderService.order123(a);
     }
 
+    @GetMapping("/order6")
+    public String order6(int a){
+        return orderService.order123(a);
+    }
+
    public void h() {
 
        System.out.println ("d");
