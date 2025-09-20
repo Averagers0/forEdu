@@ -28,4 +28,10 @@ public class OrderController {
         return orderService.order123(a);
     }
 
+
+    @GetMapping("/order4")
+    public String order4(int a){
+        return orderService.order123(a);
+    }
+
 }
