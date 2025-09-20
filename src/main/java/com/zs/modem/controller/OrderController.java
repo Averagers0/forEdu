@@ -38,4 +38,7 @@ public class OrderController {
 
        System.out.println ("d");
    }
+   public void w(){
+        System.out.println("abc");
+   }
 }
