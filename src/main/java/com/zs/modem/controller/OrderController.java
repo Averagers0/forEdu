@@ -23,4 +23,9 @@ public class OrderController {
         return orderService.order123(a);
     }
 
+    @GetMapping("/order3")
+    public String order3(int a){
+        return orderService.order123(a);
+    }
+
 }
