@@ -87,9 +87,9 @@
         * ✅ 拆成 `UserService`（业务逻辑）和 `UserRepository/userMapper`（数据库持久化）。
 
 请参考本代码的controller、service、mapper三层，分别处理不同的逻辑。
-controller只负责接口，和前端交互，业务不参与设计
-service只负责设计业务逻辑，不关心谁能用，也不关心底层如何实现
-mapper只负责和数据库交互，提供统一的增删改查方法。
+- controller只负责接口，和前端交互，业务不参与设计
+- service只负责设计业务逻辑，不关心谁能用，也不关心底层如何实现
+- mapper只负责和数据库交互，提供统一的增删改查方法。
 
 ---
 
