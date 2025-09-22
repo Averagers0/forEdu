@@ -102,6 +102,163 @@
         * ❌ 在 `Shape` 类里加 `if (type == "circle") ...`，以后每加一种图形都要改代码。
         * ✅ 定义抽象 `Shape`，具体类 `Circle`、`Rectangle` 各自实现 `draw()`，以后只需新增类，不改旧代码。
 
+参考本代码例子：
+
+orderService里的order123(int a)代码是这样的：
+
+```java
+public String order123(int a){
+    if(a == 1){
+        return "Pizza";
+    } else if (a == 2) {
+        return "noodles";
+    }
+    else{
+        return "not";
+    }
+}
+```
+
+从 **功能上**没问题，但从 **面向对象设计原则**（特别是开闭原则 OCP）来看，确实存在缺陷：
+
+* **为什么不符合 OCP？**
+
+    * 因为每当你要新增一种食物（比如 "Burger"），就要 **修改这个方法的源码**，加一条 `else if (a == 3)`。
+    * 这样导致类/方法 **对修改开放**，违背了“对修改关闭，对扩展开放”的思想。
+
+---
+
+### 更符合 OCP 的设计
+
+思路：把食物抽象成类，通过扩展（新增类）来增加功能，而不是改现有代码。
+
+#### 方式一：使用 **多态**
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+interface Food {
+    String getName();
+}
+
+class Pizza implements Food {
+    @Override
+    public String getName() {
+        return "Pizza";
+    }
+}
+
+class Noodles implements Food {
+    @Override
+    public String getName() {
+        return "Noodles";
+    }
+}
+
+// 点单逻辑
+class OrderService {
+    private Map<Integer, Food> menu = new HashMap<>();
+
+    // 注册菜品
+    public void addFood(int id, Food food) {
+        menu.put(id, food);
+    }
+
+    // 点单
+    public String order(int id) {
+        Food food = menu.get(id);
+        if (food == null) {
+            return "Not Found";
+        }
+        return food.getName();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        OrderService service = new OrderService();
+
+        // 初始化菜单
+        service.addFood(1, new Pizza());
+        service.addFood(2, new Noodles());
+
+        // 点单
+        System.out.println(service.order(1)); // Pizza
+        System.out.println(service.order(2)); // Noodles
+        System.out.println(service.order(3)); // Not Found
+
+        // 新增食物 —— 只需要加一行，不改 OrderService
+        service.addFood(3, new Food() {
+            @Override
+            public String getName() {
+                return "Burger";
+            }
+        });
+
+        System.out.println(service.order(3)); // Burger
+    }
+}
+
+
+
+```
+
+* 以后新增 `Burger` 只需要写 `class Burger implements Food`，不用动原有 `Food` 和 `OrderService`。
+
+* 当然以上写法不是spring的规范，addFood的操作一般由更下层的实现。这里写个main函数只是举例子罢了。反正核心就是
+尽量的少改动，而是多“加”
+
+只要设计的好，所有的改都可以被加代替
+
+
+---
+
+#### 方式二：使用 **工厂 + Map 注册表**
+
+更灵活的做法是用一个注册表：
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+class OrderService {
+    private final Map<Integer, Supplier<Food>> menu = new HashMap<>();
+
+    // 构造时注册食物
+    public OrderService() {
+        menu.put(1, Pizza::new);
+        menu.put(2, Noodles::new);
+    }
+
+    public Food order(int a) {
+        return menu.getOrDefault(a, () -> () -> "Not Found").get();
+    }
+}
+```
+
+以后新增 `Burger` 只需要：
+
+```java
+menu.put(3, Burger::new);
+```
+
+而不用修改 `order()` 方法。
+
+---
+
+🔑 **结论**
+你的写法逻辑上没错，但不符合 **开闭原则**。
+
+* 在 OOP 思想里，我们希望“新增功能 = 新增类/对象”，而不是“修改旧方法”。
+* 用接口、多态、工厂模式等手段，可以让系统更符合开闭原则。
+
+---
+
+要不要我帮你对比写一个 **“不符合 OCP vs 符合 OCP”** 的完整 Java 示例，展示当新增食物时，两种写法的差异？
+
+
 ---
 
 3. **里氏替换原则（LSP, Liskov Substitution Principle）**
